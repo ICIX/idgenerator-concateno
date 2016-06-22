@@ -17,7 +17,7 @@ public class IdGeneratorImpl implements IdGenerator {
     private final int SEQUENTIAL_LIMIT = 9999;
     private final int STARTING_YEAR = 2016;
     private final String template = "%03d-%c%c-%04d"; //00D-YH-000N
-    private Calendar calendar = Calendar.getInstance();
+    private Calendar calendar;
     private int sequential = 0;
     private int hourOverlay = 0;
     private int currentHour = 0;
@@ -27,6 +27,7 @@ public class IdGeneratorImpl implements IdGenerator {
 
     public IdGeneratorImpl(MemcachedClient memcachedClient) {
         this.memcachedClient = memcachedClient;
+        this.calendar = Calendar.getInstance();
 
         Object obj = memcachedClient.get(HOUR_OVERLAY);
         if(null != obj) hourOverlay = (int)obj;
@@ -66,6 +67,8 @@ public class IdGeneratorImpl implements IdGenerator {
 
     @Override
     public List<String> generate(int amount) throws RangeLimitException {
+
+        calendar = Calendar.getInstance();
 
         ArrayList<String> list = new ArrayList<>(amount);
         for (int n = 0; n < amount; n++) {

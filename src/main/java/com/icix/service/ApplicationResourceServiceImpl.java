@@ -1,25 +1,9 @@
 package com.icix.service;
 
 
-import com.icix.model.ResponseData;
-import com.icix.model.TokenAcquiringException;
-import com.icix.model.TradingPartnerInfo;
-import com.icix.model.messaging.Envelope;
-import com.icix.model.messaging.Message;
-import com.icix.model.messaging.MessageType;
+import com.icix.model.ApplicationResource;
 import com.icix.repository.ApplicationResourceRepository;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +21,7 @@ import java.util.List;
 @Service
 public class ApplicationResourceServiceImpl implements ApplicationResourceService {
 
-    private final Logger logger = Logger.getLogger(RecipientsServiceImpl.class);
+    private final Logger logger = Logger.getLogger(ApplicationResourceServiceImpl.class);
     private final ApplicationResourceRepository applicationResourceRepository;
 
     @Autowired

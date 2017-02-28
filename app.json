@@ -3,15 +3,6 @@
   "scripts": {
   },
   "env": {
-    "MEMCACHEDCLOUD_PASSWORD": {
-      "required": true
-    },
-    "MEMCACHEDCLOUD_SERVERS": {
-      "required": true
-    },
-    "MEMCACHEDCLOUD_USERNAME": {
-      "required": true
-    }
   },
   "formation": {
   },

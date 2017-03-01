@@ -5,17 +5,8 @@ import com.icix.model.ApplicationResource;
 import com.icix.repository.ApplicationResourceRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -31,6 +22,10 @@ public class ApplicationResourceServiceImpl implements ApplicationResourceServic
 
     @Override
     public byte[] findByKey(String key) {
-        return applicationResourceRepository.findByKey(key).get(0).getValue();
+        List<ApplicationResource> resources = applicationResourceRepository.findByKey(key);
+        if(resources != null && resources.isEmpty() == false){
+            return resources.get(0).getValue();
+        }
+        return new byte[0];
     }
 }

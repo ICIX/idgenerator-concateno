@@ -14,9 +14,9 @@ public class IdGeneratorImpl implements IdGenerator {
 
     private final int STARTING_POINT_LATTER = 'A';
     private final int ALPHABET_LETTERS = 26;
-    private final int SEQUENTIAL_LIMIT = 999999;
+    private final int SEQUENTIAL_LIMIT = 9999;
     private final int STARTING_YEAR = 2016;
-    private final String template = "%03d-%c%c-%06d"; //00D-YH-00000N
+    private final String template = "%03d-%c%c-%04d"; //00D-YH-000N
     private Calendar calendar;
     private int sequential = 0;
     private int hourOverlay = 0;

@@ -20,7 +20,7 @@ public class IdGeneratorTests {
 
     @Test
     public void can_generate_id() throws RangeLimitException {
-        List<String> list = idGenerator.generate(1);
+        List<String> list = idGenerator.generate(0);
 
         Assert.notEmpty(list);
     }

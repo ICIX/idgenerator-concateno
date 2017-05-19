@@ -68,6 +68,8 @@ public class IdGeneratorImpl implements IdGenerator {
     @Override
     public List<String> generate(int amount) throws RangeLimitException {
 
+        if(amount <= 0) return new ArrayList<>();
+
         calendar = Calendar.getInstance();
 
         ArrayList<String> list = new ArrayList<>(amount);

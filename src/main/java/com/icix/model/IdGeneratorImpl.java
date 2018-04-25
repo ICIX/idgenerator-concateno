@@ -124,6 +124,9 @@ public class IdGeneratorImpl implements IdGenerator {
     }
 
     private int getSequential() throws RangeLimitException {
+        logger.debug(String.format("[x]sequential [%d]",sequential));
+        logger.debug(String.format("[x]currentHour [%d]",currentHour));
+        logger.debug(String.format("[x]hourOverlay [%d]",hourOverlay));
         if(!nextHour() && sequential == SEQUENTIAL_LIMIT){ // We running out of sequential for current hour
             sequential = 0;
             hourOverlay = adjustHourOverlay();
@@ -132,6 +135,8 @@ public class IdGeneratorImpl implements IdGenerator {
             sequential = 0;
         }
 
+        logger.debug(String.format("[x]hourOverlay 2[%d]",hourOverlay));
+        logger.debug(String.format("[x]currentHour 2 [%d]",currentHour));
         if(hourOverlay + currentHour >= ALPHABET_LETTERS )
             throw new RangeLimitException("Range of IDs for current hour has reached the limit.");
 

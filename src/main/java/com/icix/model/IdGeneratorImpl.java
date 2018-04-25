@@ -45,6 +45,7 @@ public class IdGeneratorImpl implements IdGenerator {
         obj =  memcachedClient.get(LAST_ID);
         if(null != obj) {
             String lastId =obj.toString();
+            logger.debug(String.format("[x]Last ID has from MC.[%s]",lastId));
             if (initDay(lastId))
                 if (initHour(lastId))
                     setSequential(lastId);

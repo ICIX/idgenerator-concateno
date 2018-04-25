@@ -14,14 +14,18 @@ public class IdGeneratorImpl implements IdGenerator {
 
     private final int STARTING_POINT_LATTER = 'A';
     private final int ALPHABET_LETTERS = 26;
-    private final int SEQUENTIAL_LIMIT = 99999;
+    private final int SEQUENTIAL_LIMIT = 999999;
+    private final int DAY_LIMIT = 999;
     private final int STARTING_YEAR = 2016;
-    private final String template = "%03d-%c%c-%05d"; //00D-YH-0000N
+    private final String template = "%03d-%c%c-%06d"; //00D-YH-00000N
     private Calendar calendar;
     private int sequential = 0;
     private int hourOverlay = 0;
+    private int dayOverlay = 0;
+    private int yearOverlay = 0;
     private int currentHour = 0;
     private int currentDay = 0;
+    private int currentYear = 0;
 
     private MemcachedClient memcachedClient;
 
@@ -31,6 +35,12 @@ public class IdGeneratorImpl implements IdGenerator {
 
         Object obj = memcachedClient.get(HOUR_OVERLAY);
         if(null != obj) hourOverlay = (int)obj;
+
+        Object objDay = memcachedClient.get(DAY_OVERLAY);
+        if(null != objDay) dayOverlay = (int)objDay;
+
+        Object objYear = memcachedClient.get(YEAR_OVERLAY);
+        if(null != objYear) yearOverlay = (int)objYear;
 
         obj =  memcachedClient.get(LAST_ID);
         if(null != obj) {
@@ -60,6 +70,16 @@ public class IdGeneratorImpl implements IdGenerator {
 
         return false;
     }
+
+   /* private boolean initYear(String lastId) {
+        char y = lastId.charAt(6);
+        if(y == getYear()){
+            currentYear = y;
+            return true;
+        }
+
+        return false;
+    }*/
 
     private void setSequential(String lastId) {
         sequential = Integer.parseInt(lastId.substring(7,lastId.length()));
@@ -92,11 +112,11 @@ public class IdGeneratorImpl implements IdGenerator {
     }
 
     private int getDay(){
-        return calendar.get(Calendar.DAY_OF_YEAR);
+        return calendar.get(Calendar.DAY_OF_YEAR)  + dayOverlay;
     }
 
     private char getYear(){
-        return (char)(STARTING_POINT_LATTER + calendar.get(Calendar.YEAR) - STARTING_YEAR);
+        return (char)(STARTING_POINT_LATTER + (calendar.get(Calendar.YEAR)+ yearOverlay) - STARTING_YEAR);
     }
 
     private char getHour(){
@@ -126,6 +146,23 @@ public class IdGeneratorImpl implements IdGenerator {
         }
         return false;
     }
+    // Check if we hit next hour range
+   /* private boolean nextDay(){
+        if(currentDay != calendar.get(Calendar.DAY_OF_YEAR)) {
+            currentDay = calendar.get(Calendar.DAY_OF_YEAR);
+            return true;
+        }
+        return false;
+    }
+
+    // Check if we hit next hour range
+    private boolean nextYear(){
+        if(currentYear != calendar.get(Calendar.YEAR)) {
+            currentYear = calendar.get(Calendar.YEAR);
+            return true;
+        }
+        return false;
+    }*/
 
     private int adjustHourOverlay(){
         if(currentDay != getDay()){
@@ -134,8 +171,22 @@ public class IdGeneratorImpl implements IdGenerator {
         }
         else{
             hourOverlay++;
+            /*if(hourOverlay + currentHour  >= ALPHABET_LETTERS){
+                dayOverlay++;
+                if(dayOverlay + currentDay >= DAY_LIMIT ){
+                    dayOverlay = 0;
+                    currentDay = 0;
+
+                    yearOverlay++;
+                }
+                hourOverlay = 0;
+                currentHour = 0;
+
+            }*/
         }
         memcachedClient.set(HOUR_OVERLAY,0,hourOverlay);
+        memcachedClient.set(DAY_OVERLAY,0,dayOverlay);
+        memcachedClient.set(YEAR_OVERLAY,0,yearOverlay);
 
         return hourOverlay;
     }

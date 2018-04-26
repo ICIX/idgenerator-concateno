@@ -45,7 +45,7 @@ public class IdGeneratorImpl implements IdGenerator {
         obj =  memcachedClient.get(LAST_ID);
         if(null != obj) {
             String lastId =obj.toString();
-            logger.debug(String.format("[x]Last ID has from MC.[%s]",lastId));
+            logger.info(String.format("[x]Last ID has from MC.[%s]",lastId));
             if (initDay(lastId))
                 if (initHour(lastId))
                     setSequential(lastId);
@@ -107,7 +107,7 @@ public class IdGeneratorImpl implements IdGenerator {
         String lastId = list.get(list.size() - 1);
         memcachedClient.set(LAST_ID,0,lastId);
 
-        logger.debug(String.format("[x]Last ID has been written to MC.[%s]",lastId));
+        logger.info(String.format("[x]Last ID has been written to MC.[%s]",lastId));
 
         return list;
     }
@@ -125,9 +125,9 @@ public class IdGeneratorImpl implements IdGenerator {
     }
 
     private int getSequential() throws RangeLimitException {
-        logger.debug(String.format("[x]sequential [%d]",sequential));
-        logger.debug(String.format("[x]currentHour [%d]",currentHour));
-        logger.debug(String.format("[x]hourOverlay [%d]",hourOverlay));
+        logger.info(String.format("[x]sequential [%d]",sequential));
+        logger.info(String.format("[x]currentHour [%d]",currentHour));
+        logger.info(String.format("[x]hourOverlay [%d]",hourOverlay));
         if(!nextHour() && sequential == SEQUENTIAL_LIMIT){ // We running out of sequential for current hour
             sequential = 0;
             hourOverlay = adjustHourOverlay();
@@ -136,8 +136,8 @@ public class IdGeneratorImpl implements IdGenerator {
             sequential = 0;
         }
 
-        logger.debug(String.format("[x]hourOverlay 2[%d]",hourOverlay));
-        logger.debug(String.format("[x]currentHour 2 [%d]",currentHour));
+        logger.info(String.format("[x]hourOverlay 2[%d]",hourOverlay));
+        logger.info(String.format("[x]currentHour 2 [%d]",currentHour));
         if(hourOverlay + currentHour >= ALPHABET_LETTERS ) {
             // throw new RangeLimitException("Range of IDs for current hour has reached the limit.");
             dayOverlay = adjustDayOverlay();
@@ -150,6 +150,8 @@ public class IdGeneratorImpl implements IdGenerator {
 
     // Check if we hit next hour range
     private boolean nextHour(){
+        logger.info(String.format("[x]nextHour currentHour 2 [%d]",currentHour));
+        logger.info(String.format("[x]nextHour calendar.get(Calendar.HOUR_OF_DAY) 2 [%d]",calendar.get(Calendar.HOUR_OF_DAY)));
         if(currentHour != calendar.get(Calendar.HOUR_OF_DAY)) {
             currentHour = calendar.get(Calendar.HOUR_OF_DAY);
             return true;

@@ -138,8 +138,12 @@ public class IdGeneratorImpl implements IdGenerator {
 
         logger.debug(String.format("[x]hourOverlay 2[%d]",hourOverlay));
         logger.debug(String.format("[x]currentHour 2 [%d]",currentHour));
-        if(hourOverlay + currentHour >= ALPHABET_LETTERS )
-            throw new RangeLimitException("Range of IDs for current hour has reached the limit.");
+        if(hourOverlay + currentHour >= ALPHABET_LETTERS ) {
+            // throw new RangeLimitException("Range of IDs for current hour has reached the limit.");
+            dayOverlay = adjustDayOverlay();
+            if (dayOverlay + currentDay >= DAY_LIMIT)
+                throw new RangeLimitException("Range of IDs for current day has reached the limit.");
+        }
 
         return ++sequential;
     }
@@ -190,6 +194,26 @@ public class IdGeneratorImpl implements IdGenerator {
 
             }*/
         }
+        memcachedClient.set(HOUR_OVERLAY,0,hourOverlay);
+        memcachedClient.set(DAY_OVERLAY,0,dayOverlay);
+        memcachedClient.set(YEAR_OVERLAY,0,yearOverlay);
+
+        return hourOverlay;
+    }
+
+    private int adjustDayOverlay(){
+        if(hourOverlay + currentHour  >= ALPHABET_LETTERS) {
+            if (currentYear != getYear()) {
+                currentYear = getYear();
+                dayOverlay = 0;
+            } else {
+                dayOverlay++;
+            }
+            hourOverlay = 0;
+            currentHour = 0;
+        }
+
+
         memcachedClient.set(HOUR_OVERLAY,0,hourOverlay);
         memcachedClient.set(DAY_OVERLAY,0,dayOverlay);
         memcachedClient.set(YEAR_OVERLAY,0,yearOverlay);

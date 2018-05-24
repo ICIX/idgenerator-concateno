@@ -26,6 +26,7 @@ public class IdGeneratorImpl implements IdGenerator {
     private int currentHour = 0;
     private int currentDay = 0;
     private int currentYear = 0;
+    private String lastId ;
 
     private MemcachedClient memcachedClient;
 
@@ -44,8 +45,8 @@ public class IdGeneratorImpl implements IdGenerator {
 
         obj =  memcachedClient.get(LAST_ID);
         if(null != obj) {
-            String lastId =obj.toString();
-            logger.info(String.format("[x]Last ID has from MC.[%s]",lastId));
+            lastId =obj.toString();
+            logger.info(String.format("[x]Constructor Last ID has  MC.[%s]",lastId));
             if (initDay(lastId))
                 if (initHour(lastId))
                     setSequential(lastId);
@@ -86,10 +87,34 @@ public class IdGeneratorImpl implements IdGenerator {
         sequential = Integer.parseInt(lastId.substring(7,lastId.length()));
     }
 
+    private void initFromCache(){
+        Object obj = memcachedClient.get(HOUR_OVERLAY);
+        if(null != obj) hourOverlay = (int)obj;
+
+        Object objDay = memcachedClient.get(DAY_OVERLAY);
+        if(null != objDay) dayOverlay = (int)objDay;
+
+        Object objYear = memcachedClient.get(YEAR_OVERLAY);
+        if(null != objYear) yearOverlay = (int)objYear;
+
+        obj =  memcachedClient.get(LAST_ID);
+        if(null != obj) {
+            lastId =obj.toString();
+            logger.info(String.format("[x]INIT Last ID  from MC.[%s]",lastId));
+            if (initDay(lastId))
+                if (initHour(lastId))
+                    setSequential(lastId);
+        }
+        logger.info(String.format("[x]INIT Last ID  from MC.[%s]",lastId));
+    }
+
     @Override
     public List<String> generate(int amount) throws RangeLimitException {
 
         if(amount <= 0) return new ArrayList<>();
+
+        initFromCache();
+
 
         calendar = Calendar.getInstance();
 

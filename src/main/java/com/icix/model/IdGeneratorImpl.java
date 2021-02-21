@@ -27,6 +27,7 @@ public class IdGeneratorImpl implements IdGenerator {
     private int currentDay = 0;
     private int currentYear = 0;
 
+
     private MemcachedClient memcachedClient;
 
     public IdGeneratorImpl(MemcachedClient memcachedClient) {
@@ -45,7 +46,7 @@ public class IdGeneratorImpl implements IdGenerator {
         obj =  memcachedClient.get(LAST_ID);
         if(null != obj) {
             String lastId =obj.toString();
-            logger.info(String.format("[x]Last ID has from MC.[%s]",lastId));
+            logger.info(String.format("[x]Constructor Last ID has  MC.[%s]",lastId));
             if (initDay(lastId))
                 if (initHour(lastId))
                     setSequential(lastId);
@@ -86,10 +87,12 @@ public class IdGeneratorImpl implements IdGenerator {
         sequential = Integer.parseInt(lastId.substring(7,lastId.length()));
     }
 
+
     @Override
     public List<String> generate(int amount) throws RangeLimitException {
 
         if(amount <= 0) return new ArrayList<>();
+
 
         calendar = Calendar.getInstance();
 
